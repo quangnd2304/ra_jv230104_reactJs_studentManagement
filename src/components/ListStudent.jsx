@@ -2,12 +2,18 @@ import React, { Component } from 'react';
 import Student from './Student';
 
 class ListStudent extends Component {
+    getInfoStudent = (student, actionName, toggle) => {
+        this.props.getInfo(student, actionName, toggle);
+    }
+    deleteStudent = (studentId) => {
+        this.props.deleteStudent(studentId);
+    }
     render() {
         //let students = this.props.students
         let { students } = this.props;
         // render danh sách sinh viên
         let elementListStudent = students.map((st, index) => {
-            return <Student key={st.studentId} student={st} stt={index + 1} />
+            return <Student key={st.studentId} student={st} stt={index + 1} getInfo={this.getInfoStudent} deleteStudent={this.deleteStudent} />
         })
         return (
             <div className="card-body">

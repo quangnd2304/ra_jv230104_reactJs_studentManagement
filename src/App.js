@@ -14,7 +14,10 @@ class App extends Component {
       ],
       searchData: "",
       sortDir: "",
-      sortBy: ""
+      sortBy: "",
+      isToggle: false,
+      actionName: "",
+      selectedStudent: {}
     }
   }
   // B1: tạo function ở lớp cha
@@ -29,7 +32,60 @@ class App extends Component {
       sortBy: sortBy
     })
   }
+  getChilData = (actionName, toggle) => {
+    this.setState({
+      actionName: actionName,
+      isToggle: toggle
+    })
+  }
+  createStudent = (student) => {
+    // add new student to students
+    this.setState({
+      students: [...this.state.students, student]
+    })
+  }
+  getDataStudent = (student, actionName, toggle) => {
+    this.setState({
+      actionName: actionName,
+      isToggle: toggle,
+      selectedStudent: student
+    })
+  }
+  updateStudent = (updateStudent) => {
+    //Thực hiện cập nhật dữ liệu ở this.state.students
+    console.log("Update Student--->", updateStudent);
+    let students = [];
+    this.state.students.forEach(st => {
+      if (st.studentId == updateStudent.studentId) {
+        students.push(updateStudent);
+      } else {
+        students.push(st);
+      }
+    })
+    console.log("students--->", students);
+    this.setState({
+      students: students
+    })
+
+  }
+  deleteStudent = (studentId) => {
+    // Thực hiện xóa trong this.state.students
+    let students = this.state.students.filter(st => {
+      if (st.studentId != studentId) {
+        return st;
+      }
+    })
+    this.setState({
+      students: students
+    })
+
+  }
   render() {
+    // Ẩn hiện form
+    let elementForm = "";
+    if (this.state.isToggle) {
+      elementForm = <Form actionName={this.state.actionName} formData={this.createStudent} selectedStudent={this.state.selectedStudent} updateStudent={this.updateStudent} />;
+    }
     // Lọc dữ liệu sinh viên ở this.state.student để hiển thị kết quả tìm kiếm
     let studentsShow = [];
     if (this.state.searchData == "") {
@@ -69,15 +125,15 @@ class App extends Component {
           <div className="card">
             {/* CONTROL - START */}
             {/* B2. truyền function xuống con theo props */}
-            <Control searchDataProps={this.getSearchData} sortDataProps={this.getSortData} />
+            <Control searchDataProps={this.getSearchData} sortDataProps={this.getSortData} createStudent={this.getChilData} />
             {/* CONTROL - END */}
             {/* LISTSTUDENT - START */}
-            <ListStudent students={studentsShow} />
+            <ListStudent students={studentsShow} getInfo={this.getDataStudent} deleteStudent={this.deleteStudent} />
             {/* LISTSTUDENT - END */}
           </div>
         </div>
         {/* FORM - START */}
-        <Form />
+        {elementForm}
         {/* FORM - END */}
       </div>
     );
